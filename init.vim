@@ -217,6 +217,7 @@ set nowrap
 set relativenumber
 set cursorline
 " set cursorcolumn
+set colorcolumn=120
 set visualbell t_vb=        " No flashing or beeping at all
 set nowritebackup           " No backups made while editing
 set printoptions=paper:letter " US paper
@@ -240,6 +241,7 @@ set wildmenu                " Show possible completions on command line
 set wildmode=list:longest,full " List all options and complete
 set wildignore=*.class,*.o,*~,*.pyc,.git,node_modules  " Ignore certain files in tab-completion
 
+set nofoldenable
 
 set viminfo='100,f1
 
@@ -277,15 +279,23 @@ Plug 'luochen1990/rainbow'
 "     \ }
 
 "" fuzzy finder
-Plug 'junegunn/fzf', { 'do': './install --all' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+
+"" Buffer management
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'romgrk/barbar.nvim'
 
 "" language
 Plug 'sheerun/vim-polyglot'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 "" pytest"
-Plug 'alfredodeza/pytest.vim'
+Plug 'vim-test/vim-test'
+
+"" Indent line
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 
 "" color
@@ -307,25 +317,20 @@ Plug 'schickele/vim-nachtleben'
 
 Plug 'nightsense/stellarized'
 Plug 'gkjgh/cobalt'
-Plug 'slack0/srcery-vim'
-" Plug 'srcery-colors/srcery-vim'
+Plug 'srcery-colors/srcery-vim'
 Plug 'kiddos/malokai'
 Plug 'kiddos/kiddo'
 Plug 'jacoborus/tender.vim'
 Plug 'beigebrucewayne/Turtles'
-Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'mkarmona/colorsbox'
 Plug 'daylerees/colour-schemes', { 'rtp': 'vim/' }
-Plug 'rainglow/vim'
 Plug 'vim-scripts/xterm16.vim'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'mr-ubik/vim-hackerman-syntax'
 Plug 'flrnprz/plastic.vim'
-Plug 'kyoz/purify', { 'rtp': 'vim' }
 Plug 'pablopunk/sick.vim'
 Plug 'crater2150/vim-theme-chroma'
 Plug 'zeis/vim-kolor'
-Plug 'rafalbromirski/vim-aurora'
 Plug 'Haron-Prime/Antares'
 Plug 'Rigellute/rigel'
 Plug 'tyrannicaltoucan/vim-deep-space'
@@ -339,14 +344,10 @@ Plug 'caglartoklu/borlandp.vim'
 Plug 'jeffkreeftmeijer/vim-dim'
 Plug 'lewis6991/moonlight.vim'
 Plug 'aliou/moriarty.vim'
-Plug 'atahabaki/archman-vim'
 Plug 'mcmartelle/vim-monokai-bold'
 Plug 'sainnhe/forest-night'
 Plug 'sainnhe/edge'
 Plug 'sk1418/last256'
-Plug 'jaredgorski/SpaceCamp'
-Plug 'jaredgorski/fogbell.vim'
-Plug 'tpope/vim-vividchalk'
 Plug 'sainnhe/gruvbox-material'
 Plug 'notpratheek/vim-sol'
 Plug 'ayu-theme/ayu-vim'
@@ -355,12 +356,31 @@ Plug 'broduo/broduo-color-scheme'
 Plug 'vim-scripts/dante.vim'
 Plug 'vim-scripts/Relaxed-Green'
 Plug 'foooomio/vim-colors-japanesque'
+Plug 'tomasiser/vim-code-dark'
+Plug 'zefei/vim-colortuner'
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+Plug 'morhetz/gruvbox'
+Plug 'bluz71/vim-moonfly-colors'
+Plug 'agude/vim-eldar'
+Plug 'evgenyzinoviev/vim-vendetta'
+Plug 'bratpeki/truedark-vim'
+Plug 'dikiaap/minimalist'
+Plug 'drewtempelmeyer/palenight.vim'
+Plug 'google/vim-colorscheme-primary'
+Plug 'preservim/vim-colors-pencil'
+Plug 'saltdotac/citylights.vim'
+Plug 'tobi-wan-kenobi/zengarden'
+Plug 'lucasprag/simpleblack'
+Plug 'uloco/vim-bluloco-dark'
+
+Plug 'chrisbra/Colorizer'
 
 "" Semshi for python syntax based hilighting
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 
 "" Conqueror of Completion
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 "" From Ian Langford's settings"
 Plug 'airblade/vim-gitgutter'
@@ -383,21 +403,19 @@ Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'wellle/targets.vim'
 
-
-
 call plug#end()
 
 " rainbow colorful parentheses
 let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 
 " enable deoplete
-let g:deoplete#enable_at_startup = 1
+" let g:deoplete#enable_at_startup = 1
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " make sure semshi and deoplete play well together
 " https://github.com/numirias/semshi#semshi-is-slow-together-with-deopletenvim
-let deoplete#custom#auto_complete_delay = 100
+" let deoplete#custom#auto_complete_delay = 100
 
 " Essential for filetype plugins.
 filetype plugin indent on
@@ -538,6 +556,12 @@ set foldlevel=0
 " ----------------------------------------------------------------------------
 " COLORS
 " ----------------------------------------------------------------------------
+set background=dark
+if (has("termguicolors"))
+  set termguicolors
+endif
+
+set t_Co=256
 
 " Make sure colored syntax mode is on, and make it Just Work with 256-color terminals.
 set background=dark
@@ -565,12 +589,6 @@ if !has('gui_running')
   endif
 endif
 
-set background=dark
-if (has("termguicolors"))
-  set termguicolors
-endif
-set t_Co=256
-
 " solarized options
 let g:solarized_termcolors= 256
 let g:solarized_termtrans = 0
@@ -584,8 +602,8 @@ let g:solarized_visibility= "high"
 " " gruvbox options
 let g:gruvbox_italic = 1
 let g:gruvbox_improved_strings = 1
-let g:gruvbox_contrast_dark = "hard"
-let g:gruvbox_contrast_light = "hard"
+let g:gruvbox_contrast_dark = "medium"
+let g:gruvbox_contrast_light = "medium"
 
 " xterm options
 let g:xterm16_termcolors=   256
@@ -620,7 +638,7 @@ let g:srcery_inverse_match_paren = 1
 
 " material options
 " let g:material_theme_style = 'default' | 'palenight' | 'ocean' | 'lighter' | 'darker'
-let g:material_theme_style = 'ocean'
+let g:material_theme_style = 'darker'
 let g:material_terminal_italics = 1
 
 " hybrid options
@@ -683,12 +701,6 @@ let g:PaperColor_Theme_Options = {
 let g:molokai_original = 1
 let g:rehash256 = 1
 
-" For purify
-let g:purify_override_colors = {
-    \ 'pink':  { 'gui': '#FF87FF', 'cterm': '213' },
-    \ 'green': { 'gui': '#5FD700', 'cterm': '76' }
-\ }
-
 " For xcodedark | xcodelight
 augroup vim-colors-xcode
     autocmd!
@@ -702,7 +714,7 @@ autocmd vim-colors-xcode ColorScheme * hi SpecialComment cterm=italic gui=italic
 " Set contrast.
 " This configuration option should be placed before `colorscheme gruvbox-material`.
 " Available values: 'hard', 'medium'(default), 'soft'
-let g:gruvbox_material_background = 'soft'
+let g:gruvbox_material_background = 'hard'
 
 
 
@@ -713,7 +725,7 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " for chroma
 " let g:chroma_underline_style = "underline" | "bold"
-let g:chroma_underline_style = "underline"
+let g:chroma_underline_style = "bold"
 " For fonts, that do not work well in italic, you may also want to
 " change all other occurrences of italic, e.g.:
 let g:chroma_italic_style = "italic"
@@ -742,17 +754,43 @@ let ayucolor="dark"   " for dark version of themek
 " lightline theme
 let g:lightline = {'colorscheme' : 'gruvbox_material'}
 
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
+
+
+" neodark settings
+let g:neodark#background = '#000010'
+let g:neodark#use_256color = 1 " default: 0
+let g:neodark#terminal_transparent = 0 " default: 0
+let g:neodark#solid_vertsplit = 1 " default: 0
+" let g:lightline = {}
+" let g:lightline.colorscheme = 'neodark'
+
+" mirage settings
+"if (has("nvim"))
+"  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+"  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+"endif
+" let g:mirage_terminal_italics=1
+
+" Fox
+let g:fox_type='regular' " regular | day | night
 
 if (&t_Co == 256 || has('gui_running'))
   if (($TERM_PROGRAM == 'iTerm.app') || ($TERM_PROGRAM == 'Apple_Terminal'))
     """ MY TOP SCHEMES
-    " colorscheme breezy " ---> best colorscheme for python highlighting
+    " colorscheme breezy " ---> best colorscheme for python highlighting{{{}}}
+    " colorscheme simpleblack " --> this is REALLY good
+    " colorscheme blackbird
     " colorscheme dante
+    " colorscheme codedark
+    " colorscheme tokyonight
+    " colorscheme challenger_deep
     " colorscheme dark_themer
     " colorscheme vividchalk
     " colorscheme gruvbox-material
+    " colorscheme gruvbox
     " colorscheme fogbell
-    " colorscheme aurora
     " colorscheme material
     " colorscheme moonlight
     " colorscheme xterm16
@@ -760,14 +798,12 @@ if (&t_Co == 256 || has('gui_running'))
     " colorscheme flattened_dark
     " colorscheme flattened_light
     " colorscheme antares
-    " colorscheme purify
-    " colorscheme edge
     " colorscheme forest-night
-    " colorscheme chroma
+    " colorscheme breezy
     " colorscheme kolor
     " colorscheme sick
     " colorscheme vim-monokai-tasty
-    " colorscheme molokai
+    " colorscheme molokai " the original
     " colorscheme monokai-bold
     " colorscheme sublimemonokai
     " colorscheme monokai_pro
@@ -785,50 +821,31 @@ if (&t_Co == 256 || has('gui_running'))
     " colorscheme PaperColor
     " colorscheme turtles
     " colorscheme kiddo
-    " colorscheme material
     " colorscheme ceudah
-    " colorscheme seti
-    " colorscheme onehalflight
-    " colorscheme base16-pop
-    " colorscheme base16-tube
-    " colorscheme base16-circus
+    " colorscheme vendetta
     " colorscheme base16-bright
-    " colorscheme base16-3024
-    " colorscheme base16-macintosh
-    " colorscheme base16-dracula
-    " colorscheme base16-classic-dark
-    " colorscheme base16-classic-light
-    " colorscheme base16-google-dark
-    " colorscheme base16-paraiso
-    " colorscheme base16-phd
-    " colorscheme base16-solarized-dark
-    " colorscheme base16-atelier-dune
-    " colorscheme base16-atelier-lakeside
-    " colorscheme base16-atelier-lakeside-light
-    " colorscheme base16-material-vivid
     " colorscheme base16-atelier-seaside
-    " colorscheme base16-atelier-seaside-light
-    " colorscheme base16-atelier-heath
-    " colorscheme base16-atelier-forest
-    " colorscheme base16-atelier-forest-light
-    " colorscheme base16-atelier-heath-light
-    " colorscheme base16-gruvbox-dark-hard
+    " colorscheme base16-google-light
+    " colorscheme seti
     " colorscheme colorsbox-stbright
     " colorscheme relaxedgreen
     " colorscheme rigel
-    colorscheme srcery
+    " colorscheme srcery
     " colorscheme deep-space
     " colorscheme xcodewwdc
     " colorscheme sitruuna
     " colorscheme panic
-    " colorscheme ayu
+    " colorscheme borlandp
+    " colorscheme truedark
+    " colorscheme base16-3024
+    colorscheme blackbird
   else
-    " colorscheme material
+    colorscheme blackbird
   endif
 endif
 
 if &diff
-    colorscheme chroma
+  colorscheme chroma
 endif
 
 
@@ -1009,7 +1026,7 @@ vnoremap <silent> # :<C-U>
 if &diff
    " diff mode
     set diffopt+=iwhite
-    colorscheme PaperColor
+    colorscheme monokai
 endif
 
 
@@ -1165,3 +1182,7 @@ endif
 " nmap <silent><Leader>tf <Esc>:Pytest file<CR>
 " nmap <silent><Leader>tc <Esc>:Pytest class<CR>
 " nmap <silent><Leader>tm <Esc>:Pytest method<CR>
+
+" Enable italics, Make sure this is immediately after colorscheme
+" https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
+highlight Comment cterm=italic gui=italic
