@@ -247,8 +247,9 @@ set viminfo='100,f1
 
 
 " plugins
+let s:PLUGIN_HOME=expand('~/.local/share/nvim/plugged')
 
-call plug#begin()
+call plug#begin(s:PLUGIN_HOME)
 
 Plug 'airblade/vim-gitgutter'
 Plug 'Chiel92/vim-autoformat'
@@ -284,8 +285,9 @@ Plug 'junegunn/fzf.vim'
 
 
 "" Buffer management
-Plug 'kyazdani42/nvim-web-devicons'
+Plug 'kyazdani42/nvim-web-devicons' " Recommended (for coloured icons)
 Plug 'romgrk/barbar.nvim'
+Plug 'ryanoasis/vim-devicons'  "Icons without colours
 
 "" language
 Plug 'sheerun/vim-polyglot'
@@ -295,7 +297,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'vim-test/vim-test'
 
 "" Indent line
-Plug 'lukas-reineke/indent-blankline.nvim'
+" Plug 'lukas-reineke/indent-blankline.nvim'
 
 
 "" color
@@ -315,8 +317,6 @@ Plug 'alexanderjeurissen/lumiere.vim'
 Plug 'trusktr/seti.vim'
 Plug 'schickele/vim-nachtleben'
 
-Plug 'nightsense/stellarized'
-Plug 'gkjgh/cobalt'
 Plug 'srcery-colors/srcery-vim'
 Plug 'kiddos/malokai'
 Plug 'kiddos/kiddo'
@@ -368,11 +368,13 @@ Plug 'bratpeki/truedark-vim'
 Plug 'dikiaap/minimalist'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'google/vim-colorscheme-primary'
-Plug 'preservim/vim-colors-pencil'
-Plug 'saltdotac/citylights.vim'
-Plug 'tobi-wan-kenobi/zengarden'
 Plug 'lucasprag/simpleblack'
-Plug 'uloco/vim-bluloco-dark'
+Plug 'https://gitlab.com/protesilaos/tempus-themes-vim.git'
+Plug 'sainnhe/sonokai'
+Plug 'sainnhe/everforest'
+Plug 'ericbn/vim-solarized'
+Plug 'SiddharthShyniben/pitch'
+Plug 'robre/maracuja.vim'
 
 Plug 'chrisbra/Colorizer'
 
@@ -612,8 +614,8 @@ let g:xterm16_degrade   =   0
 let g:xterm16_bold      =   1
 let g:xterm16_underline =   1
 let g:xterm16_italic    =   1
-let g:xterm16_contrast  =   "low"
-let g:xterm16_visibility=   "normal"
+let g:xterm16_contrast  =   "high"
+let g:xterm16_visibility=   "high"
 let g:xterm16_colormap  =   "soft"
 let g:xterm16_brightness=   "high"
 
@@ -838,9 +840,11 @@ if (&t_Co == 256 || has('gui_running'))
     " colorscheme borlandp
     " colorscheme truedark
     " colorscheme base16-3024
-    colorscheme blackbird
+    " " colorscheme base16-pop
+    " colorscheme base16-pico
+    colorscheme malokai
   else
-    colorscheme blackbird
+    colorscheme malokai
   endif
 endif
 
@@ -1059,7 +1063,7 @@ silent! autocmd VimEnter * RemoveConflictingAlignMaps
 
 
 " ==== Background color toggle ==== "
-map <leader>bg :let &background = ( &background == "dark"? "light" : "dark" )<CR>
+" map <leader>bg :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 
 
 " ==== EXECUTE PYTHON CODE DIRECTLY FROM VIM ==== "
@@ -1082,10 +1086,10 @@ function! SaveAndExecutePython()
 
     " reuse existing buffer window if it exists otherwise create a new one
     if !exists("s:buf_nr") || !bufexists(s:buf_nr)
-        silent execute 'botright new ' . s:output_buffer_name
+        silent execute 'botright vnew ' . s:output_buffer_name
         let s:buf_nr = bufnr('%')
     elseif bufwinnr(s:buf_nr) == -1
-        silent execute 'botright new'
+        silent execute 'botright vnew'
         silent execute s:buf_nr . 'buffer'
     elseif bufwinnr(s:buf_nr) != bufwinnr('%')
         silent execute bufwinnr(s:buf_nr) . 'wincmd w'
@@ -1186,3 +1190,48 @@ endif
 " Enable italics, Make sure this is immediately after colorscheme
 " https://stackoverflow.com/questions/3494435/vimrc-make-comments-italic
 highlight Comment cterm=italic gui=italic
+
+" ----------------------------------------------------------------------------
+" COC Settings
+" ----------------------------------------------------------------------------
+
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~ '\s'
+" endfunction
+
+" " Insert <tab> when previous text is space, refresh completion if not.
+" inoremap <silent><expr> <TAB>
+" \ coc#pum#visible() ? coc#pum#next(1):
+" \ <SID>check_back_space() ? "\<Tab>" :
+" \ coc#refresh()
+" inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+
+" if has('nvim')
+"   inoremap <silent><expr> <c-space> coc#refresh()
+" else
+"   inoremap <silent><expr> <c-@> coc#refresh()
+" endif
+
+
+" inoremap <expr> <cr> coc#pum#visible() ? coc#_select_confirm() : "\<CR>"
+
+
+
+" Map <tab> for trigger completion, completion confirm, snippet expand and jump
+" like VSCode: >
+
+inoremap <silent><expr> <TAB>
+  \ coc#pum#visible() ? coc#_select_confirm() :
+  \ coc#expandableOrJumpable() ?
+  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
